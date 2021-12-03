@@ -1,0 +1,23 @@
+PODS:
+  - Flutter (1.0.0)
+  - GoogleAds-IMA-iOS-SDK (3.14.5)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - GoogleAds-IMA-iOS-SDK (~> 3.14.5)
+
+SPEC REPOS:
+  trunk:
+    - GoogleAds-IMA-iOS-SDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  GoogleAds-IMA-iOS-SDK: b088674002266c5638e73d10696c8b13872ee15e
+
+PODFILE CHECKSUM: 922d95890ffd4e7c88c0feae6165569c7b4f4468
+
+COCOAPODS: 1.11.2
