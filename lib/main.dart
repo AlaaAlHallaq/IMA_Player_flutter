@@ -53,17 +53,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  // This is used in the platform side to register the view.
-  final String viewType = 'webview';
-  // Pass parameters to the platform side.
-  final Map<String, dynamic> creationParams = <String, dynamic>{};
+  static const platform = const MethodChannel("com.ima.project.com.ima_new/urls");
 
   @override
   void initState() {
+    sendUrls();
     super.initState();
   }
   Widget build(BuildContext context) {
-
     // This is used in the platform side to register the view.
     final String viewType = '<platform-view-type>';
     // Pass parameters to the platform side.
@@ -92,6 +89,15 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
+  }
+
+  void sendUrls() async {
+    await platform.invokeMethod("urls", {
+      "urlAds": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=",
+      "urlVidio":"https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
+    }).then((value) {
+      print("value:"+value);
+    });
   }
 
 }

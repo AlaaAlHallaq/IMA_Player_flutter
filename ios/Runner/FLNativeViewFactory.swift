@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import AVKit
+import GoogleInteractiveMediaAds
 
 class FLNativeViewFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
@@ -26,6 +27,11 @@ class FLNativeViewFactory: NSObject, FlutterPlatformViewFactory {
 class FLNativeView: NSObject, FlutterPlatformView {
     private var _view: UIView
 
+    var contentPlayhead: IMAAVPlayerContentPlayhead?
+    var adsLoader: IMAAdsLoader!
+    var adsManager: IMAAdsManager!
+    var player:AVPlayer!
+   
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
@@ -43,24 +49,35 @@ class FLNativeView: NSObject, FlutterPlatformView {
     }
 
     func createNativeView(view _view: UIView){
-        
+        static let kTestAppAdTagUrl =
+          "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&"
+          + "iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&"
+          + "output=vast&unviewed_position_start=1&"
+          + "cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator="
+
     guard let videoURL = URL(string: "https://storage.googleapis.com/gvabox/media/samples/stock.mp4") else { return }
+       
         let layerContainer = AutoLayoutLayerContainer()
             .useAutoLayout()
             .add(to: _view)
             .fillParent()
         
         
-        let player = AVPlayer.init(url: videoURL)
+         player = AVPlayer.init(url: videoURL)
         let playerLayer = AVPlayerLayer(player: player)
         layerContainer.layer.addSublayer(playerLayer)
         layerContainer.onLayoutChanged = {
             playerLayer.frame = $0.bounds
         }
-        player.play()
         
+        player.play()
+      
     }
 }
+
+
+
+
 extension UIView {
     func useAutoLayout() -> Self {
         self.translatesAutoresizingMaskIntoConstraints = false

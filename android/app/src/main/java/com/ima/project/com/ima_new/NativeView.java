@@ -1,4 +1,5 @@
 package com.ima.project.com.ima_new;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -29,32 +31,45 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+
 import java.util.Map;
 
 class NativeView implements PlatformView {
-   // WebView webView;
     private PlayerView playerView;
     private ExoPlayer player;
     private ImaAdsLoader adsLoader;
+    Context context;
 
-    NativeView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
+    NativeView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, BinaryMessenger messenger, String urlVidio, String urlAds) {
 
-        playerView= new PlayerView(context);
+        playerView = new PlayerView(context);
         adsLoader = new ImaAdsLoader.Builder(context).build();
-
+        this.context = context;
         if (Util.SDK_INT > 23) {
-            initializePlayer(context);
+            initializePlayer(context,urlVidio,urlAds);
             if (playerView != null) {
                 playerView.onResume();
             }
         }
-        //        webView= new WebView(context);
-//        webView.setWebViewClient(new WebViewClient());
-//        webView.getSettings().setJavaScriptEnabled(true);
-//        webView.loadUrl(url);
 
     }
+
+//    private void getDataThenInitPlayer(Context context, BinaryMessenger messenger) {
+//        new MethodChannel(messenger, "com.ima.project.com.ima_new/urls")
+//                .setMethodCallHandler((call, result) -> {
+//                    if (call.method.equals("urls")) {
+//                        String urlVidio = call.argument("urlVidio");
+//                        String urlAds = call.argument("urlAds");
+//                        initializePlayer(context, urlVidio, urlAds);
+//                    }
+//                    result.success("success");
+//
+//                });
+//    }
 
     private void releasePlayer() {
         adsLoader.setPlayer(null);
@@ -63,7 +78,8 @@ class NativeView implements PlatformView {
         player = null;
     }
 
-    private void initializePlayer(Context context) {
+    private void initializePlayer(Context context, String urlVidio, String urlAds) {
+
         // Set up the factory for media sources, passing the ads loader and ad view providers.
         DataSource.Factory dataSourceFactory =
                 new DefaultDataSourceFactory(context, Util.getUserAgent(context, context.getString(R.string.app_name)));
@@ -77,20 +93,26 @@ class NativeView implements PlatformView {
         player = new ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build();
         playerView.setPlayer(player);
         adsLoader.setPlayer(player);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            player.setVideoSurface(new Surface(new SurfaceTexture(true)));
+        }
         // Create the MediaItem to play, specifying the content URI and ad tag URI.
-        Uri contentUri = Uri.parse(context.getString(R.string.content_url));
-        Uri adTagUri = Uri.parse(context.getString(R.string.ad_tag_url));
+//        Uri contentUri = Uri.parse(context.getString(R.string.content_url));
+//        Uri adTagUri = Uri.parse(context.getString(R.string.ad_tag_url));
+
+        Uri contentUri = Uri.parse(urlVidio);
+        Uri adTagUri = Uri.parse(urlAds);
         MediaItem mediaItem = new MediaItem.Builder().setUri(contentUri).setAdTagUri(adTagUri).build();
 
         // Prepare the content and ad to be played with the SimpleExoPlayer.
         player.setMediaItem(mediaItem);
         player.prepare();
+        playerView.requestFocus();
+        playerView.setKeepContentOnPlayerReset(true);
 
         // Set PlayWhenReady. If true, content and ads will autoplay.
-        player.setPlayWhenReady(false);
+        player.setPlayWhenReady(true);
     }
-
 
 
     @NonNull
@@ -108,4 +130,6 @@ class NativeView implements PlatformView {
             releasePlayer();
         }
     }
+
+
 }
