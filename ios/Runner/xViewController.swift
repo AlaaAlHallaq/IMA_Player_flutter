@@ -2,7 +2,7 @@ import AVFoundation
 import GoogleInteractiveMediaAds
 import UIKit
 
-class ViewController: UIViewController, IMAAdsLoaderDelegate, IMAAdsManagerDelegate {
+class xViewController: UIViewController, IMAAdsLoaderDelegate, IMAAdsManagerDelegate {
 
   static let kTestAppContentUrl_MP4 =
     "https://storage.googleapis.com/gvabox/media/samples/stock.mp4"

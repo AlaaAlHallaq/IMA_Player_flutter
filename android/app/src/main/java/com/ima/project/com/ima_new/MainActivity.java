@@ -15,7 +15,11 @@ public class MainActivity extends FlutterActivity {
         MultiDex.install(this);
         GeneratedPluginRegistrant.registerWith(flutterEngine);
 
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "com.ima.project.com.ima_new/urls")
+        new MethodChannel(
+            flutterEngine.getDartExecutor()
+                    .getBinaryMessenger(),
+            "com.ima.project.com.ima_new/urls"
+        )
                 .setMethodCallHandler((call, result) -> {
                     Log.d("TAG", "getDataThenInitPlayer:log2");
                     if (call.method.equals("urls")) {
@@ -27,7 +31,11 @@ public class MainActivity extends FlutterActivity {
                                 .getPlatformViewsController()
                                 .getRegistry()
                                 .registerViewFactory("<platform-view-type>",
-                                        new NativeViewFactory(flutterEngine.getDartExecutor().getBinaryMessenger(),urlVidio,urlAds));
+                                        new NativeViewFactory(flutterEngine
+                                                .getDartExecutor()
+                                                .getBinaryMessenger(),urlVidio,urlAds
+                                        )
+                                );
 
                     }
                     result.success("success");

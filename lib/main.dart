@@ -64,8 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // This is used in the platform side to register the view.
     final String viewType = '<platform-view-type>';
     // Pass parameters to the platform side.
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
-    if(Platform.isAndroid){
+    final Map<String, dynamic> creationParams = <String, dynamic>{
+      "urlAds": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=",
+      "urlVideo":"https://storage.googleapis.com/gvabox/media/samples/stock.mp4"
+    };
+
+    if(Platform.isAndroid) {
       return AndroidView(
         viewType: viewType,
         layoutDirection: TextDirection.ltr,
@@ -100,5 +104,27 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+}
+class MagicViewController {
+  late MethodChannel _channel;
+  MagicViewController(int id) {
+    _channel = new MethodChannel('MagicView/$id');
+    _channel.setMethodCallHandler(_handleMethod);
+  }
+  Future<dynamic> _handleMethod(MethodCall call) async {
+    switch (call.method) {
+      case 'sendFromNative':
+        String text = call.arguments as String;
+        return new Future.value("Text from native: $text");
+    }
+  }
+  Future<void> receiveFromFlutter(String text) async {
+    try {
+      final String result = await _channel.invokeMethod('receiveFromFlutter', {"text": text});
+      print("Result from native: $result");
+    } on PlatformException catch (e) {
+      print("Error from native: $e.message");
+    }
+  }
 }
 
